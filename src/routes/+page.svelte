@@ -5,81 +5,70 @@
 
   const featuredProjects = [
     {
-      name: "Bore",
-      href: "/projects#bore",
-      desc: "bypass your NAT in just 400 lines of code",
-      aside: "6500+ stars on GitHub",
+      name: "xinOS",
+      href: "/xinOS",
+      desc: "hyperfast operating system for retro games",
     },
     {
-      name: "Percival",
+      name: "aski",
       href: "/projects#percival",
-      desc: "reactive notebooks for exploratory data analysis",
+      desc: "high abstraction assembler with types",
+      aside: "Replit Language Jam finalist",
     },
     {
-      name: "Rustpad",
-      href: "/projects#rustpad",
-      desc: "self-hosted collaborative text editor",
-      aside: "2M+ downloads",
-    },
-    {
-      name: "Crepe",
+      name: "OSpaint",
       href: "/projects#crepe",
-      desc: "compiled Datalog language in Rust",
-      aside: "used by distributed databases & security systems",
+      desc: "MSpaint as an operating system",
+      aside: "CodeDayLA best in class winner",
     },
     {
-      name: "FastSeg",
+      name: "warpalloc",
       href: "/projects#fastseg",
-      desc: "real-time semantic segmentation for self-driving cars",
+      desc: "portable memory allocator in assembly",
     },
     {
-      name: "Set with Friends",
-      href: "/projects#setwithfriends",
-      desc: "online multiplayer card game",
-      aside: "30M+ page views, 900K+ users",
+      name: "ramenbox",
+      href: "/projects#rustpad",
+      desc: "6502 emulator + game console",
+      aside: "CodeDay best hardware winner",
     },
   ];
 </script>
 
 <Seo
-  title="Eric Zhang"
+  title="Sammy Hajhamid"
   description="Software engineer, researcher, and designer. Making meaningful systems and interfaces for people."
 />
 
 <p
-  class="layout-md text-black text-xl leading-tight font-light mb-16"
+  class="layout-md text-black text-xl leading-tight font-light mb-12"
   id="eric-is"
 >
-  <span class="g">is a</span> software engineer<span class="g">,</span><br />
-  researcher<span class="g">, and</span><br />
-  designer<span class="g">.</span>
+  <span class="g">really likes </span> computers <span class="g">&</span> math
 </p>
 
-<div class="layout-md text-lg space-y-14">
+<div class="layout-md text-lg space-y-8">
   <div class="space-y-5">
     <p>
-      I study at Harvard and work on the future of cloud computing at <a
-        class="link"
-        href="https://modal.com">Modal</a
-      >.
+      I secure the blockchain at <a class="link" href="https://osec.io"
+        >OtterSec</a
+      >
+      and develop the future of finanace at
+      <a class="link" href="https://zellic.io">Zellic</a>'s Quantitative
+      Research Lab.
     </p>
 
     <p>
-      My ambition is to make better <em>interactive software</em> that helps people
-      create, collaborate, learn, and meaningfully express what brings them joy.
+      My hope is to learn and see as much computer science and pure mathematics
+      as I can. I specifically love <em>embedded systems</em>, where programmers
+      have creative freedom over hardware, software, and the bridge between the
+      two.
     </p>
-
-    <p>
-      Towards that goal, I am a generalist and care deeply about <em>systems</em
-      >, which form the fundamental building blocks of our applications; and
-      <em>interaction design</em>, how we use and live with computers that are
-      all around us.
-    </p>
+    <p />
   </div>
 
   <div class="leading-snug space-y-4">
-    <p class="pb-2">Notable open-source work:</p>
-
+    <p>Some of my favorite passion projects include:</p>
     {#each featuredProjects as project}
       <a class="project-pair" href={project.href}>
         <div class="text-black font-medium">
@@ -95,62 +84,35 @@
       </a>
     {/each}
   </div>
-
-  <div class="space-y-5">
-    <p>
-      Previously, I worked at <a class="link" href="https://prosper.org"
-        >Prosper Robotics</a
-      >, <a class="link" href="https://convex.dev">Convex</a>,
-      <a class="link" href="https://jumptrading.com">Jump Trading</a>,
-      <a class="link" href="https://scale.com">Scale AI</a>, and
-      <a class="link" href="https://nvidia.com">Nvidia</a>. I’ve also
-      independently published things in the past, like a
-      <a
-        class="link"
-        href="https://aip.scitation.org/doi/pdf/10.1063/9780735421646"
-        >physics book</a
-      >,
-      <a
-        class="link"
-        href="https://www.combinatorics.org/ojs/index.php/eljc/article/view/v28i1p24/pdf"
-        >combinatorics research</a
-      >, and
-      <a class="link" href="https://github.com/ekzhang/graphics-workshop"
-        >graphics tutorials</a
-      >
-      used by thousands. Before that, I won two gold medals at the
-      <a class="link" href="https://stats.ioinformatics.org/people/6717"
-        >International Olympiad in Informatics</a
-      >.
-    </p>
-
-    <p>
-      At Harvard, I’ve been a distinguished teaching fellow for upper-level CS
-      classes. I am a classical violist and enjoy making music with others (<a
-        class="link"
-        href="https://www.youtube.com/live/_T4IVv0becE">1</a
-      >,
-      <a
-        class="link"
-        href="https://www.thecrimson.com/article/2023/4/18/Natasha-pierre-great-comet-1812-musical-preview/"
-        >2</a
-      >, <a class="link" href="https://youtu.be/4ysgUA-rKUw">3</a>,
-      <a class="link" href="https://youtu.be/rYrVFTzP4sw">4</a>,
-      <a class="link" href="https://www.harvardbachsoc.org/">5</a>,
-      <a
-        class="link"
-        href="https://news.harvard.edu/gazette/story/2019/11/west-side-story-explores-racial-ethnic-political-complications/"
-        >6</a
-      >,
-      <a class="link" href="https://youtu.be/OcucfY2Kzqo">7</a>,
-      <a class="link" href="https://youngarts.org/">8</a>).
-    </p>
-
-    <p>
-      Other interests: math, physics, art, photography, musical theatre, and
-      biking.
-    </p>
-  </div>
+  <p>
+    I currently focus on <em>cybersecurity</em>. As a member of the
+    <a class="link" href="https://ctftime.org/stats/2022/US"
+      >United State's #1 cybersecurity team</a
+    >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work closely
+    with national goverment organizations like the
+    <a
+      class="link"
+      href="https://www.wpafb.af.mil/News/Article-Display/Article/2872772/daf-declares-hack-a-sat-challenge-winners-aims-to-reduce-space-vulnerability/"
+      >United States Department of the Air Force</a
+    >,
+    <a class="link" href="https://en.wikipedia.org/wiki/Groupe_ADP"
+      >France's Aéroports de Paris</a
+    >,
+    <a class="link" href="https://safcsp.org.sa/en/"
+      >Saudi Federation for Cyber Security and Programming</a
+    >, and
+    <a
+      class="link"
+      href="https://u.ae/ar-AE/information-and-services/justice-safety-and-the-law/cyber-safety-and-digital-security"
+      >UAE Cybersecurity Council</a
+    >
+    as well as blockchain organizations such as the
+    <a class="link" href="https://solana.com">Solana Foundation</a>, the
+    <a class="link" href="https://sui.io/">Sui Blockchain</a>, and
+    <a class="link" href="https://aptoslabs.com/">Aptos Labs</a>
+    to make the internet—and world—a safer place.
+  </p>
+  <p>test</p>
 </div>
 
 <style lang="postcss">
