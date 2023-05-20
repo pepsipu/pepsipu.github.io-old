@@ -12,7 +12,7 @@
   <div class="row">
     <span>Email</span>
     <hr />
-    <a class="link" href="mailto:p@pepsi.pw">pepsi@pepsi.pw</a>
+    <a class="link" href="mailto:p@pepsi.pw">pepsipu@pepsi.pw</a>
   </div>
 </footer>
 

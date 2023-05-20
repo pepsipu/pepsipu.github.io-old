@@ -6,29 +6,29 @@
   const featuredProjects = [
     {
       name: "xinOS",
-      href: "/xinOS",
+      href: "https://github.com/pepsipu/xinOS",
       desc: "hyperfast operating system for retro games",
     },
     {
       name: "aski",
-      href: "/projects#percival",
+      href: "https://github.com/pepsipu/aski",
       desc: "high abstraction assembler with types",
       aside: "Replit Language Jam finalist",
     },
     {
       name: "OSpaint",
-      href: "/projects#crepe",
+      href: "https://github.com/pepsipu/OSpaint",
       desc: "MSpaint as an operating system",
       aside: "CodeDayLA best in class winner",
     },
     {
       name: "warpalloc",
-      href: "/projects#fastseg",
+      href: "https://github.com/pepsipu/warpalloc",
       desc: "portable memory allocator in assembly",
     },
     {
       name: "ramenbox",
-      href: "/projects#rustpad",
+      href: "https://github.com/pepsipu/ramenbox",
       desc: "6502 emulator + game console",
       aside: "CodeDay best hardware winner",
     },
@@ -37,11 +37,10 @@
 
 <Seo
   title="Sammy Hajhamid"
-  description="Software engineer, researcher, and designer. Making meaningful systems and interfaces for people."
-/>
+  description="unfathombly based"/>
 
 <p
-  class="layout-md text-black text-xl leading-tight font-light mb-12"
+  class="layout-md text-xl leading-tight font-light mb-12 text-black"
   id="eric-is"
 >
   <span class="g">really likes </span> computers <span class="g">&</span> math
@@ -59,7 +58,7 @@
     </p>
 
     <p>
-      My hope is to learn and see as much computer science and pure mathematics
+      My hope is to see as much computer science and pure mathematics
       as I can. I specifically love <em>embedded systems</em>, where programmers
       have creative freedom over hardware, software, and the bridge between the
       two.
@@ -87,7 +86,7 @@
   <p>
     I currently focus on <em>cybersecurity</em>. As a member of the
     <a class="link" href="https://ctftime.org/stats/2022/US"
-      >United State's #1 cybersecurity team</a
+      >United States' #1 cybersecurity team</a
     >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work closely
     with national goverment organizations like the
     <a
@@ -112,7 +111,10 @@
     <a class="link" href="https://aptoslabs.com/">Aptos Labs</a>
     to make the internet—and world—a safer place.
   </p>
-  <p>test</p>
+  <p>As an academic researcher, I've done guest lectures on exploitation theory at the
+    <a class="link" href="https://www.youtube.com/watch?v=VYr0Ut8n0bg">HOPE Security Synopsium</a>,
+    Carnegie Mellon University, and EPFL Innovation Park. Checkout this piece on <a class="link" href="https://blog.pepsipu.com/posts/nightmare">exploiting one-byte writes in standard libraries</a>!
+  </p>
 </div>
 
 <style lang="postcss">

@@ -3,18 +3,18 @@
 
   import { formatTime } from "$lib/utils";
 
-  type Writing = {
+  type Post = {
     title: string;
     date: Date;
-    summary: string;
+    subtitle: string;
     link: string;
   };
 
-  export let data: Writing[];
+  export let posts: Post[];
 </script>
 
 <div class="grid gap-y-4">
-  {#each data as item}
+  {#each posts as item}
     <a
       href={item.link}
       class="block -mx-3 px-3 py-2 hover:bg-neutral-100 transition-colors"
@@ -30,8 +30,8 @@
           {formatTime("%B %-d, %Y", item.date)}
         </div>
       </div>
-      <div class="text-lg leading-snug font-serif italic">
-        {item.summary}
+      <div class="text-sm leading-snug font-light text-black">
+        {item.subtitle}
       </div>
     </a>
   {/each}
