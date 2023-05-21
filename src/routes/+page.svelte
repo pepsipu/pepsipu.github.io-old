@@ -35,9 +35,7 @@
   ];
 </script>
 
-<Seo
-  title="Sammy Hajhamid"
-  description="unfathombly based"/>
+<Seo title="Sammy Hajhamid" description="unfathombly based" />
 
 <p
   class="layout-md text-xl leading-tight font-light mb-12 text-black"
@@ -58,10 +56,9 @@
     </p>
 
     <p>
-      My hope is to see as much computer science and pure mathematics
-      as I can. I specifically love <em>embedded systems</em>, where programmers
-      have creative freedom over hardware, software, and the bridge between the
-      two.
+      My hope is to see as much computer science and pure mathematics as I can.
+      I specifically love <em>embedded systems</em>, where programmers have
+      creative freedom over hardware, software, and the bridge between the two.
     </p>
     <p />
   </div>
@@ -86,7 +83,7 @@
   <p>
     I currently focus on <em>cybersecurity</em>. As a member of the
     <a class="link" href="https://ctftime.org/stats/2022/US"
-      >United States' #1 cybersecurity team</a
+      >United States' #1 competitive cybersecurity team</a
     >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work closely
     with national goverment organizations like the
     <a
@@ -111,9 +108,16 @@
     <a class="link" href="https://aptoslabs.com/">Aptos Labs</a>
     to make the internet—and world—a safer place.
   </p>
-  <p>As an academic researcher, I've done guest lectures on exploitation theory at the
-    <a class="link" href="https://www.youtube.com/watch?v=VYr0Ut8n0bg">HOPE Security Synopsium</a>,
-    Carnegie Mellon University, and EPFL Innovation Park. Checkout this piece on <a class="link" href="https://blog.pepsipu.com/posts/nightmare">exploiting one-byte writes in standard libraries</a>!
+  <p>
+    As an academic researcher, I've done guest lectures on the theory of
+    exploitation at the
+    <a class="link" href="https://www.youtube.com/watch?v=VYr0Ut8n0bg"
+      >HOPE Security Synopsium</a
+    >, Carnegie Mellon University, and EPFL Innovation Park. Check out this
+    piece on
+    <a class="link" href="https://blog.pepsipu.com/posts/nightmare"
+      >exploiting one-byte writes in standard libraries</a
+    >!
   </p>
 </div>
 

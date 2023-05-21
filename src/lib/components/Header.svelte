@@ -3,7 +3,7 @@
 
   const links = [
     { name: "blog", href: "/blog" },
-    { name: "thoughts", href: "/thoughts" },
+    { name: "notes", href: "/notes" },
   ];
 
   let pageTitle: string | null = null;
@@ -18,11 +18,11 @@
 </script>
 
 <header
-  class="layout-md flex justify-between items-start"
+  class="layout-md flex justify-between items-start mb-3 sm:mb-1"
   data-sveltekit-noscroll
   data-sveltekit-preload-code="eager"
 >
-  <h1 class="font-bold text-black text-2xl mb-2">
+  <h1 class="font-bold text-black text-2xl">
     <a href="/">Sammy Hajhamid</a>
     {#if pageTitle}
       <span class="page-title">

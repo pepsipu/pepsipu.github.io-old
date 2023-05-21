@@ -15,7 +15,6 @@
       },
     },
   });
-
   $: html = marked.parse(source, {
     smartLists: true,
     smartypants: true,

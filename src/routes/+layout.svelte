@@ -3,14 +3,17 @@
   import "../app.css";
 
   import { browser, dev } from "$app/environment";
-
+  import { onMount } from "svelte";
   import { fly } from "svelte/transition";
 
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
+  import { posts } from "$lib/store";
   import type { LayoutData } from "./$types";
+  import { updatePostList } from "$lib/utils";
 
   export let data: LayoutData;
+  onMount(updatePostList);
 
   const isMobile = browser && /Android|iPhone/i.test(navigator.userAgent);
   const reducedMotion =

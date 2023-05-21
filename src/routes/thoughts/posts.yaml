@@ -1,5 +1,0 @@
-posts:
-  - title: "Attacking MuJS: Breaking a JS engine with type confusion and an integer overflow."
-    date: 2023-03-24
-    subtitle: "Writeup to uiuctf's mujs challenge, a javascript pwn challenge were you must pwn the MuJS javascript engine to achieve arbitrary read, write, and code execution."
-    link: /assets/posts/mujs.md

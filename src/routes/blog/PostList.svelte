@@ -2,26 +2,22 @@
   import { ArrowUpRight } from "lucide-svelte";
 
   import { formatTime } from "$lib/utils";
+  import { posts as storedPosts, type Post } from "$lib/store";
 
-  type Post = {
-    title: string;
-    date: Date;
-    subtitle: string;
-    link: string;
-  };
+  let posts: Post[];
 
-  export let posts: Post[];
+  storedPosts.subscribe((value) => {
+    posts = value;
+  });
 </script>
 
 <div class="grid gap-y-4">
   {#each posts as item}
     <a
-      href={item.link}
+      href={`blog/${item.slug}`}
       class="block -mx-3 px-3 py-2 hover:bg-neutral-100 transition-colors"
-      target="_blank"
-      rel="noreferrer"
     >
-      <div class="flex flex-col sm:flex-row sm:items-end mb-1.5">
+      <div class="mb-1.5">
         <div class="text-lg text-black">
           {item.title}
           <ArrowUpRight size={18} class="inline text-neutral-400" />
@@ -30,7 +26,7 @@
           {formatTime("%B %-d, %Y", item.date)}
         </div>
       </div>
-      <div class="text-sm leading-snug font-light text-black">
+      <div class="text-md font-serif leading-snug text-black">
         {item.subtitle}
       </div>
     </a>
