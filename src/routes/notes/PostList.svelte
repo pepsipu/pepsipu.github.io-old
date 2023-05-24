@@ -17,7 +17,7 @@
 <div class="grid gap-y-4">
   {#each posts as item}
     <a
-      href={`notes/${item.slug}`}
+      href={`site/notes/${item.slug}`}
       class="block -mx-3 px-3 py-2 hover:bg-neutral-100 transition-colors"
     >
       <div class="mb-1.5">
