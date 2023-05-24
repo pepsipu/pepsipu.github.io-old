@@ -35,7 +35,7 @@
   ];
 </script>
 
-<Seo title="Sammy Hajhamid" description="unfathombly based" />
+<Seo title="Sammy Hajhamid" description="unfathomably based" />
 
 <p
   class="layout-md text-xl leading-tight font-light mb-12 text-black"
@@ -50,7 +50,7 @@
       I secure the blockchain at <a class="link" href="https://osec.io"
         >OtterSec</a
       >
-      and develop the future of finanace at
+      and develop the future of finance at
       <a class="link" href="https://zellic.io">Zellic</a>'s Quantitative
       Research Lab.
     </p>
@@ -85,7 +85,7 @@
     <a class="link" href="https://ctftime.org/stats/2022/US"
       >United States' #1 competitive cybersecurity team</a
     >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work closely
-    with national goverment organizations like the
+    with national government organizations like the
     <a
       class="link"
       href="https://www.wpafb.af.mil/News/Article-Display/Article/2872772/daf-declares-hack-a-sat-challenge-winners-aims-to-reduce-space-vulnerability/"
@@ -112,7 +112,7 @@
     As an academic researcher, I've done guest lectures on the theory of
     exploitation at the
     <a class="link" href="https://www.youtube.com/watch?v=VYr0Ut8n0bg"
-      >HOPE Security Synopsium</a
+      >HOPE Security Symposium</a
     >, Carnegie Mellon University, and EPFL Innovation Park. Check out this
     piece on
     <a class="link" href="https://blog.pepsipu.com/posts/nightmare"

@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
 
   const links = [
-    { name: "???", href: "/" },
+    { name: "???", href: "https://pepsi.pw" },
     { name: "blog", href: "/blog" },
     { name: "notes", href: "/notes" },
   ];
