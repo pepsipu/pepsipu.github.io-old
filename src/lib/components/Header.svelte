@@ -3,8 +3,8 @@
 
   const links = [
     { name: "???", href: "/" },
-    { name: "blog", href: "/site/blog" },
-    { name: "notes", href: "/site/notes" },
+    { name: "blog", href: "/blog" },
+    { name: "notes", href: "/notes" },
   ];
 
   let pageTitle: string | null = null;
