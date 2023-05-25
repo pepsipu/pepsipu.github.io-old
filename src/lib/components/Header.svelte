@@ -24,7 +24,7 @@
   data-sveltekit-preload-code="eager"
 >
   <h1 class="font-bold text-black text-2xl">
-    <a href="/site">Sammy Hajhamid</a>
+    <a href="/">Sammy Hajhamid</a>
     {#if pageTitle}
       <span class="page-title">
         <span class="text-neutral-400">—</span>
