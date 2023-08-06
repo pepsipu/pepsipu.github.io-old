@@ -27,7 +27,7 @@ export function parsePostList(newPosts: any): Post[] {
 }
 
 export function updatePostList() {
-  fetch("https://strapi.pepsi.pw/api/posts")
+  fetch("https://strapi.pepsi.pw/api/posts?sort=date:DESC")
     .then((request) => request.json())
     .then((newPosts) => {
       posts.set(parsePostList(newPosts));

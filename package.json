@@ -15,8 +15,10 @@
     "@fontsource/newsreader": "^4.5.10",
     "@sveltejs/adapter-node": "^1.2.4",
     "crypto-js": "^4.1.1",
+    "highlight.js": "^11.8.0",
     "lucide-svelte": "^0.130.0",
     "marked": "^4.3.0",
+    "marked-highlight": "^2.0.2",
     "strftime": "^0.10.1",
     "svelte": "^3.58.0"
   },
@@ -25,6 +27,7 @@
     "@rollup/pluginutils": "^5.0.2",
     "@sveltejs/adapter-static": "^2.0.1",
     "@sveltejs/kit": "^1.15.1",
+    "@tailwindcss/typography": "^0.5.9",
     "@types/crypto-js": "^4.1.1",
     "@types/js-yaml": "^4.0.5",
     "@types/marked": "^4.0.8",
