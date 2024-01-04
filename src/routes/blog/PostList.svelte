@@ -1,8 +1,7 @@
 <script lang="ts">
   import { ArrowUpRight } from "lucide-svelte";
 
-  import { formatTime } from "$lib/utils";
-  import type { Post } from "$lib/post";
+  import { formatTime, type Post } from "$lib/post";
 
   export let posts: Post[];
 </script>
@@ -23,7 +22,7 @@
         </div>
       </div>
       <div class="text-md font-serif leading-snug text-black">
-        {item.subtitle}
+        {item.description}
       </div>
     </a>
   {/each}

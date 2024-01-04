@@ -1,9 +1,8 @@
-import { getPostBySlug, formatTime } from "$lib/utils";
+import { getPostBySlug } from "$lib/post";
 
 export const load = async ({ params }) => {
   return {
-    slug: params.slug,
-    post: await getPostBySlug(params.slug),
+    post: getPostBySlug(params.slug),
   };
 };
 

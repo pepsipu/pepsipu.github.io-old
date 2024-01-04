@@ -1,8 +1,8 @@
-import { getPostList } from "$lib/utils";
+import { posts } from "$lib/post";
 
 export const load = async ({ params }) => {
   return {
-    posts: await getPostList(),
+    posts,
   };
 };
 
