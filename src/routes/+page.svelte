@@ -41,7 +41,7 @@
   class="layout-md text-xl leading-tight font-light mb-12 text-black"
   id="eric-is"
 >
-  <span class="g">really likes </span> computers <span class="g">&</span> math
+  <span class="g">likes </span> computers <span class="g">&</span> math
 </p>
 
 <div class="layout-md text-lg space-y-8">
@@ -56,15 +56,14 @@
     </p>
 
     <p>
-      My hope is to see as much computer science and pure mathematics as I can.
-      I specifically love <em>embedded systems</em>, where programmers have
-      creative freedom over hardware, software, and the bridge between the two.
+      I'd like to see as much computer science and pure mathematics as I can.
+      Embedded systems, where programmers have creative freedom over hardware,
+      software, and the bridge between the two, are my favorite.
     </p>
-    <p />
   </div>
 
   <div class="leading-snug space-y-4">
-    <p>Some of my favorite passion projects include:</p>
+    <p>Some of my favorite personal projects include:</p>
     {#each featuredProjects as project}
       <a class="project-pair" href={project.href}>
         <div class="text-black font-medium">
@@ -81,36 +80,33 @@
     {/each}
   </div>
   <p>
-    I currently focus on <em>cybersecurity</em>. As a member of the
+    I currently focus on cybersecurity. As a member of the
     <a class="link" href="https://ctftime.org/stats/2022/US"
       >United States' #1 competitive cybersecurity team</a
-    >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work closely
-    with national government organizations like the
+    >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work with
+    government organizations like the
     <a
       class="link"
       href="https://www.wpafb.af.mil/News/Article-Display/Article/2872772/daf-declares-hack-a-sat-challenge-winners-aims-to-reduce-space-vulnerability/"
-      >United States Department of the Air Force</a
+      >United States AFA</a
     >,
     <a class="link" href="https://en.wikipedia.org/wiki/Groupe_ADP"
-      >France's Aéroports de Paris</a
+      >Aéroports de Paris</a
     >,
-    <a class="link" href="https://safcsp.org.sa/en/"
-      >Saudi Federation for Cyber Security and Programming</a
-    >, and
+    <a class="link" href="https://safcsp.org.sa/en/">Saudi FCSP</a>, and
     <a
       class="link"
       href="https://u.ae/ar-AE/information-and-services/justice-safety-and-the-law/cyber-safety-and-digital-security"
       >UAE Cybersecurity Council</a
     >
-    as well as blockchain organizations such as the
+    and blockchain organizations like the
     <a class="link" href="https://solana.com">Solana Foundation</a>, the
     <a class="link" href="https://sui.io/">Sui Blockchain</a>, and
     <a class="link" href="https://aptoslabs.com/">Aptos Labs</a>
-    to make the internet—and world—a safer place.
+    to make the internet safer.
   </p>
   <p>
-    As an academic researcher, I've done guest lectures on the theory of
-    exploitation at the
+    As an academic researcher, I've done guest lectures on exploitation at the
     <a class="link" href="https://www.youtube.com/watch?v=VYr0Ut8n0bg"
       >HOPE Security Symposium</a
     >, Carnegie Mellon University, and EPFL Innovation Park. Check out this

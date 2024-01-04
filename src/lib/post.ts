@@ -11,7 +11,3 @@ export type Post = {
   tags: string[];
   slug: string;
 };
-
-export const posts: Writable<Post[]> = writable([]);
-
-export const notes: Writable<Post[]> = writable([]);

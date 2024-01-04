@@ -2,13 +2,9 @@
   import { ArrowUpRight } from "lucide-svelte";
 
   import { formatTime } from "$lib/utils";
-  import { posts as storedPosts, type Post } from "$lib/store";
+  import type { Post } from "$lib/post";
 
-  let posts: Post[];
-
-  storedPosts.subscribe((value) => {
-    posts = value;
-  });
+  export let posts: Post[];
 </script>
 
 <div class="grid gap-y-4">

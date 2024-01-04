@@ -8,35 +8,14 @@
 
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
-  import { posts } from "$lib/store";
   import type { LayoutData } from "./$types";
-  import { updatePostList } from "$lib/utils";
 
   export let data: LayoutData;
-  onMount(updatePostList);
 
   const isMobile = browser && /Android|iPhone/i.test(navigator.userAgent);
   const reducedMotion =
     browser && matchMedia("(prefers-reduced-motion: reduce)").matches;
 </script>
-
-<svelte:head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  {#if !dev}
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-156644599-1"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "UA-156644599-1");
-    </script>
-  {/if}
-</svelte:head>
 
 <Header />
 

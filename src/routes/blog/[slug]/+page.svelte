@@ -4,12 +4,11 @@
   import { getPostBySlug, formatTime } from "$lib/utils";
 
   export let data;
-  const postPromise = getPostBySlug(data.slug);
+  const post = data.post;
 </script>
 
 <Seo title="Sammy Hajhamid – Blog" description="blog shtuff" />
 <section class="layout-md py-12">
-  {#await postPromise then post}
     <hr class="mb-5" />
     <div class="mb-1.5">
       <div class="text-2xl text-black sm:mb-1">
@@ -29,5 +28,4 @@
       <hr class="mb-6 mt-5" />
       <Markdown source={post.content} />
     </div>
-  {/await}
 </section>

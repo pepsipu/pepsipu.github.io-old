@@ -4,7 +4,6 @@
   const links = [
     { name: "???", href: "https://pepsi.pw" },
     { name: "blog", href: "/blog" },
-    { name: "notes", href: "/notes" },
   ];
 
   let pageTitle: string | null = null;

@@ -1,7 +1,5 @@
 <script lang="ts">
   import { page } from "$app/stores";
-
-  import { Bug } from "lucide-svelte";
 </script>
 
 <div class="layout-md">
