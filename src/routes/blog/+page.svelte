@@ -9,5 +9,5 @@
 
 <section class="layout-md py-12">
   <h2>Blog Posts</h2>
-  <PostList posts={data.posts}/>
+  <PostList posts={data.posts} />
 </section>
