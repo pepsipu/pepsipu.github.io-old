@@ -205,7 +205,7 @@ Well, if you've read
 [this writeup on zelda](https://jonathankeller.net/ctf/zelda/) (or perhaps seem
 many `vmmap`s before), you'll know that the heap is awfully close to the loaded
 binary. Sure enough, if you look at the
-[kernel source](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/process.c#n1019),
+[kernel source](https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/process.c#L1031),
 the heap is a random offset from the end of the binary, in the range from
 `(0x0, 0x2000000)`.
 
