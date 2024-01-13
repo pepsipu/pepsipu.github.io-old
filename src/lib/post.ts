@@ -16,7 +16,7 @@ export type Post = {
 const utc = strftime.utc(); // YAML dates are in UTC
 slug.defaults.mode = "pretty";
 
-export const posts = Object.values(
+export const posts: Post[] = Object.values(
   import.meta.glob("/posts/*.md", {
     as: "raw",
     eager: true,
