@@ -10,6 +10,7 @@ export type Post = {
   date: string;
   tags: string[];
   slug: string;
+  published: true;
 };
 
 const utc = strftime.utc(); // YAML dates are in UTC

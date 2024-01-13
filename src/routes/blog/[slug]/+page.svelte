@@ -26,7 +26,7 @@
           {formatTime("%B %-d, %Y", post.date)}
         </div>
         <div class="text-sm text-neutral-400">
-          {post.tags.join(" ")}
+          {post.tags.join(", ")}
         </div>
       </div>
       <hr class="mb-6 mt-5" />

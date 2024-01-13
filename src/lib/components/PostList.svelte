@@ -6,22 +6,29 @@
   export let posts: Post[];
 </script>
 
-<div class="grid gap-y-4">
+<div class="grid gap-y-3">
   {#each posts as item}
     <a
       href={`blog/${item.slug}`}
       class="block -mx-3 px-3 py-2 hover:bg-neutral-100 transition-colors"
     >
-      <div class="mb-1.5">
+      <div class="mb-0">
         <div class="text-lg text-black">
           {item.title}
           <ArrowUpRight size={18} class="inline text-neutral-400" />
         </div>
-        <div class="sm:ml-auto mb-0.5 text-neutral-500">
+      </div>
+
+      <div class="flex justify-between items-start">
+        <div class="text-sm text-black">
           {formatTime("%B %-d, %Y", item.date)}
         </div>
+        <div class="text-sm text-black">
+          {item.tags.join(", ")}
+        </div>
       </div>
-      <div class="text-md font-serif leading-snug text-black">
+
+      <div class="text-md leading-snug text-neutral-500">
         {item.description}
       </div>
     </a>
