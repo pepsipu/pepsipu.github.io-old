@@ -1,8 +1,11 @@
 <script lang="ts">
   import Seo from "$lib/components/Seo.svelte";
   import PostList from "$lib/components/PostList.svelte";
+  import type { Post } from "$lib/post";
 
-  export let data;
+  export let data: {
+    posts: Post[];
+  };
 
   const allChips = new Set(data.posts.map((post) => post.tags).flat());
 
