@@ -7,11 +7,16 @@
     posts: Post[];
   };
 
-  const allChips = new Set(data.posts.map((post) => post.tags).flat());
+  // basically, if activeChips is empty, we want to show all posts except notes
+  let defaultActiveChips: Set<string> = new Set(
+    data.posts.map((post) => post.tags).flat()
+  );
+  defaultActiveChips.delete("notes");
+
+  const allChips = [...defaultActiveChips].sort();
+  allChips.unshift("notes");
 
   let activeChips: Set<string> = new Set();
-  let defaultActiveChips: Set<string> = new Set(allChips);
-  defaultActiveChips.delete("notes");
 
   const getFilteredPosts = (activeChips: Set<string>) => {
     return data.posts.filter(
@@ -46,7 +51,7 @@
   description="My blog on cybersecurity and computer science."
 />
 
-<section class="layout-md py-12">
+<section class="layout-md transition py-12">
   <div class="flex justify-between mb-1">
     <div class="flex text-lg">Blog Posts</div>
     <div class="flex gap-2">
