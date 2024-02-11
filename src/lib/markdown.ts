@@ -23,6 +23,7 @@ const md = markdownit({
   },
 })
   .use(markdownAlerts)
+  // silly little katex
   .use((<any>markdownKatex).default || markdownKatex);
 
 export const renderMd = md.render.bind(md);

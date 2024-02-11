@@ -217,7 +217,7 @@ have roll, pitch, and yaw. We can generalize later.
 For now, look at the equations that fell out of the norm constraint! Since
 there's only a single degree of freedom, we should be able to find
 $a(t), b(t), c(t), d(t)$ that satisfy these equations. Finding a general form
-for these equations feels sort of reminiscent of solving a differential
+for these equations feels sort of reminiscent to solving a differential
 equation. If you're willing to accept something a little shoddy, I spun up a
 quick and dirty SageMath script to do the algebra for me.
 
@@ -406,8 +406,8 @@ form the group $O(n)$.
 > In linear algebra, an orthogonal matrix, or orthonormal matrix, is a real
 > square matrix whose columns and rows are orthonormal vectors.
 
-We've got basically the same definition! Orthonormal vectors satisfy both the
-magnitude and orthogonality constraints.
+We've got the same definition! Orthonormal vectors satisfy both the magnitude
+and orthogonality constraints.
 
 ### $\binom{n}{2}$ Degrees of Freedom
 
