@@ -16,10 +16,10 @@
     <hr class="mb-5" />
     <div class="mb-1.5">
       <div class="text-2xl text-black sm:mb-1">
-        {post.title}
+        {@html post.rendered.title}
       </div>
       <div class="text-lg leading-snug font-light text-black sm:mb-1">
-        {post.description}
+        {@html post.rendered.description}
       </div>
       <div class="flex justify-between items-start mb-3 sm:mb-1">
         <div class="text-sm text-neutral-400">

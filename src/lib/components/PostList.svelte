@@ -10,11 +10,11 @@
   {#each posts as item}
     <a
       href={`blog/${item.slug}`}
-      class="block -mx-3 px-3 py-2 hover:bg-neutral-100 transition-colors"
+      class="block -mx-3 px-3 py-2 hover:bg-neutral-100"
     >
       <div class="mb-0">
         <div class="text-lg text-black">
-          {item.title}
+          {@html item.rendered.title}
           <ArrowUpRight size={18} class="inline text-neutral-400" />
         </div>
       </div>
@@ -29,7 +29,7 @@
       </div>
 
       <div class="text-md leading-snug text-neutral-500">
-        {item.description}
+        {@html item.rendered.description}
       </div>
     </a>
   {/each}

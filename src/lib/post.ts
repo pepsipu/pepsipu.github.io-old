@@ -2,6 +2,7 @@ import strftime from "strftime";
 import fs from "fs";
 import { parse } from "yaml";
 import slug from "slug";
+import { renderMdInline } from "./markdown";
 
 export type Post = {
   content: string;
@@ -11,6 +12,10 @@ export type Post = {
   tags: string[];
   slug: string;
   published: true;
+  rendered: {
+    title: string;
+    description: string;
+  };
 };
 
 const utc = strftime.utc(); // YAML dates are in UTC
@@ -35,11 +40,15 @@ function parsePost(post: string): Post {
   meta.slug = slug(meta.title);
   meta.date = new Date(meta.date);
   // certainly not the prettiest code i've written
-  const content = sections.slice(2).join("---\n");
+  let content = sections.slice(2).join("---\n");
 
   return {
     ...meta,
     content,
+    rendered: {
+      title: renderMdInline(meta.title),
+      description: renderMdInline(meta.description),
+    },
   };
 }
 

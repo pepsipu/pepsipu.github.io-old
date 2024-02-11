@@ -56,8 +56,7 @@
     <div class="flex text-lg">Blog Posts</div>
     <div class="flex gap-2">
       {#each [...allChips] as tag}
-        <!-- svelte-ignore a11y-click-events-have-key-events im sorry my screenreader friends -->
-        <span
+        <button
           class={"px-2 py-1 text-sm rounded " + getChipStyle(activeChips, tag)}
           on:click={() => {
             activeChips.has(tag)
@@ -68,7 +67,7 @@
           }}
         >
           {tag}
-        </span>
+        </button>
       {/each}
     </div>
   </div>
