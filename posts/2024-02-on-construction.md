@@ -123,9 +123,9 @@ just didn't think of them.
 
 # $O(n)$?
 
-Let's return to our core question---how could I have come up rotation matrices
-myself? If I didn't know anything about sines or cosines, neither explanation is
-useful.
+Let's return to our core question---how could I have come up with rotation
+matrices myself? If I didn't know anything about sines or cosines, neither
+explanation is useful.
 
 ## Defining a rotation matrix
 
@@ -157,26 +157,29 @@ Let's start in $n = 2$. What does our scaling constraint say about the matrix?
 Let's try to compute the norm symbolically and see.
 
 $$
-\lVert \begin{bmatrix}
+\newcommand{\norm}{\@ifstar{\normstar}{\normnostar}}
+\newcommand{\normnostar}[1]{\lVert #1 \rVert}
+\newcommand{\normstar}[1]{\left\lVert #1 \right\rVert}
+\norm*{\begin{bmatrix}
   a & b \\
   c & d
 \end{bmatrix} \begin{bmatrix}
   x \\
   y \\
-\end{bmatrix} \lVert = \lVert \begin{bmatrix}
+\end{bmatrix}} = \norm*{\begin{bmatrix}
   x \\
   y \\
-\end{bmatrix} \lVert
+\end{bmatrix}}
 $$
 
 $$
-\lVert \begin{bmatrix}
+\norm*{\begin{bmatrix}
   ax + by \\
   cx + dy \\
-\end{bmatrix} \lVert = \lVert \begin{bmatrix}
+\end{bmatrix}}= \norm*{\begin{bmatrix}
   x \\
   y \\
-\end{bmatrix} \lVert
+\end{bmatrix}}
 $$
 
 $$
@@ -309,11 +312,11 @@ $$
 with a constrained norm of:
 
 $$
-(c_1x_{11} + c_2x_{12} + \dots + c_nx_{1n})^2 + \\ (c_1x_{21} + c_2x_{22} + \dots + c_nx_{2n})^2 + \\ \dots + \\ (c_1x_{n1} + c_2x_{n2} + \dots + c_nx_{nn})^2 = \\
+(c_1x_{11} + c_2x_{12} + \dots + c_nx_{1n})^2 \\ + (c_1x_{21} + c_2x_{22} + \dots + c_nx_{2n})^2 \\ + \dots \\+ c_1x_{n1} + c_2x_{n2} + \dots + c_nx_{nn})^2
 $$
 
 $$
-c_1^2 + c_2^2 + \dots + c_n^2
+= c_1^2 + c_2^2 + \dots + c_n^2
 $$
 
 Alternatively, as:
@@ -326,7 +329,7 @@ We can expand each squared summation as two summations, split them up, and swap
 the summation order:
 
 $$
-\sum_{j = 1}^n(\sum_{i = 1}^n{(c_ix_{ji})^2} + \sum_{k \ne i}^n{(c_ic_kx_{ji}x_{jk})}) = \sum_{i = 1}^n{c_i^2} \\
+\sum_{j = 1}^n\left[\sum_{i = 1}^n{(c_ix_{ji})^2} + \sum_{k \ne i}^n{(c_ic_kx_{ji}x_{jk})}\right] = \sum_{i = 1}^n{c_i^2} \\
 
 \sum_{j = 1}^n\sum_{i = 1}^n{(c_ix_{ji})^2} + \sum_{j = 1}^n\sum_{k \ne i}^n{(c_ic_kx_{ji}x_{jk})} = \sum_{i = 1}^n{c_i^2} \\
 
@@ -341,13 +344,13 @@ example:
 
 $$
 \sum_{j = 1}^n{x_{ji}^2} = \lVert x_i \lVert \\
-\sum_{j = 1}^n{x_{ji}x_{jk}} = x_i \cdot x_k \\
+\sum_{j = 1}^n{x_{ji}x_{jk}} = \langle x_i, x_k \rangle \\
 $$
 
 So our generalized norm equation becomes:
 
 $$
-\sum_{i = 1}^nc_i^2\lVert x_i \lVert + \sum_{k \ne i}^nc_ic_k(x_i \cdot x_k) = \sum_{i = 1}^n{c_i^2}
+\sum_{i = 1}^nc_i^2\lVert x_i \lVert + \sum_{k \ne i}^nc_ic_k\langle x_i, x_k \rangle = \sum_{i = 1}^n{c_i^2}
 $$
 
 Isn't that incredible? Who would've thought the norm equation was hiding all
