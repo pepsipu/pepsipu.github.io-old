@@ -173,6 +173,9 @@ $$
 $$
 
 $$
+\newcommand{\norm}{\@ifstar{\normstar}{\normnostar}}
+\newcommand{\normnostar}[1]{\lVert #1 \rVert}
+\newcommand{\normstar}[1]{\left\lVert #1 \right\rVert}
 \norm*{\begin{bmatrix}
   ax + by \\
   cx + dy \\
