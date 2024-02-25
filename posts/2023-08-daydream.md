@@ -5,7 +5,7 @@ description:
   "author writeup to corCTF 2023's unsolved pwnable, where competitors must
   exploit a previously unexploitable primitive: universal blind stack write"
 date: "8/5/23"
-tags: [ctf]
+tags: [security]
 published: true
 ---
 

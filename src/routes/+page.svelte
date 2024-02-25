@@ -47,18 +47,22 @@
 <div class="layout-md text-lg space-y-8">
   <div class="space-y-5">
     <p>
-      I secure the blockchain at <a class="link" href="https://osec.io"
-        >OtterSec</a
+      I'm currently the course instructor of <a
+        class="link"
+        href="https://cs595.seclab.cs.ucsb.edu/"
+        >595G, Seminar in Computer Security</a
       >
-      and develop the future of finance at
-      <a class="link" href="https://zellic.io">Zellic</a>'s Quantitative
-      Research Lab.
+      at the University of California, Santa Barbara. Previously, I was a founding
+      member and blockchain security auditor at
+      <a class="link" href="https://osec.io">OtterSec</a>
+      and a quantitative researcher at
+      <a class="link" href="https://zellic.io">Zellic</a>.
     </p>
 
     <p>
-      I'd like to see as much computer science and pure mathematics as I can.
-      Embedded systems, where programmers have creative freedom over hardware,
-      software, and the bridge between the two, are my favorite.
+      I'd like to explore as much computer science and pure mathematics as I
+      can. Embedded systems, where programmers have creative freedom over
+      hardware, software, and the bridge between the two, are my favorite.
     </p>
   </div>
 
@@ -80,25 +84,18 @@
     {/each}
   </div>
   <p>
-    I currently focus on cybersecurity. As a member of the
+    I play Capture-the-Flag competitions with the
     <a class="link" href="https://ctftime.org/stats/2022/US"
       >United States' #1 competitive cybersecurity team</a
-    >, <a class="link" href="https://dicega.ng">DiceGang</a>, I work with
-    government organizations like the
+    >, <a class="link" href="https://dicega.ng">DiceGang</a>, and practice for
+    the
     <a
       class="link"
-      href="https://www.wpafb.af.mil/News/Article-Display/Article/2872772/daf-declares-hack-a-sat-challenge-winners-aims-to-reduce-space-vulnerability/"
-      >United States AFA</a
-    >,
-    <a class="link" href="https://en.wikipedia.org/wiki/Groupe_ADP"
-      >Aéroports de Paris</a
-    >,
-    <a class="link" href="https://safcsp.org.sa/en/">Saudi FCSP</a>, and
-    <a
-      class="link"
-      href="https://u.ae/ar-AE/information-and-services/justice-safety-and-the-law/cyber-safety-and-digital-security"
-      >UAE Cybersecurity Council</a
+      href="https://en.wikipedia.org/wiki/International_Cybersecurity_Challenge"
+      >International Cybersecurity Competition</a
     >
+    with the U.S. Cybersecurity Team. I also work with government organizations like
+    the United States AFA, Aéroports de Paris, Saudi FCSP and UAE Cybersecurity Council
     and blockchain organizations like the
     <a class="link" href="https://solana.com">Solana Foundation</a>, the
     <a class="link" href="https://sui.io/">Sui Blockchain</a>, and
@@ -106,14 +103,17 @@
     to make the internet safer.
   </p>
   <p>
-    As an academic researcher, I've done guest lectures on exploitation at the
+    As a researcher, I've done guest lectures on exploitation at the
     <a class="link" href="https://www.youtube.com/watch?v=VYr0Ut8n0bg"
-      >HOPE Security Symposium</a
-    >, Carnegie Mellon University, and EPFL Innovation Park. Check out this
-    piece on
-    <a class="link" href="https://blog.pepsipu.com/posts/nightmare"
-      >exploiting one-byte writes in standard libraries</a
-    >!
+      >HOPE Conference</a
+    >, Carnegie Mellon University, and EPFL Innovation Park. I hope to be a
+    professor.
+  </p>
+  <p>
+    I write about interesting technical problems and ideas on <a
+      class="link"
+      href="/blog">my blog</a
+    >.
   </p>
 </div>
 

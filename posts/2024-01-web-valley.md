@@ -4,7 +4,7 @@ description:
   "writeup to New Year Mayhem 2024's hard web. what happens when parseInt
   doesn't work as we expect? well, XSS!"
 date: "1/27/24"
-tags: [ctf]
+tags: [security]
 published: false
 ---
 
