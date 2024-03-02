@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" sizes="any" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+      crossorigin="anonymous"
+    />
+    
+		<link href="../_app/immutable/assets/0.f8f99493.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/4.a584f254.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/post.513bd049.css" rel="stylesheet">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.a0c31b60.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/scheduler.b92a22d0.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/singletons.8268c95d.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.5062054a.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/index.f9851652.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/0.274b8561.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/each.cebf2b70.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/stores.ada46f77.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/4.943259dd.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/post.9b990332.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Seo.8f22d58a.js"><title>web valley: prototype pollution can disable XSS filters??</title><!-- HEAD_svelte-dqum1g_START --><meta name="description" content="writeup to New Year Mayhem 2024's hard web. what happens when parseInt doesn't work as we expect? well, XSS!"><meta property="og:title" content="web valley: prototype pollution can disable XSS filters??"><meta property="og:description" content="writeup to New Year Mayhem 2024's hard web. what happens when parseInt doesn't work as we expect? well, XSS!"><meta property="og:image" content="https://pepsipu.com/assets/images/me-af.png"><meta name="twitter:card" content="summary_large_image"><!-- HEAD_svelte-dqum1g_END -->
+  </head>
+
+  <body>
+    <div>  <header class="layout-md flex justify-between items-start mb-3 sm:mb-1" data-sveltekit-noscroll data-sveltekit-preload-code="eager"><h1 class="font-bold text-black text-2xl"><a href="/" data-svelte-h="svelte-pk3fzq">Sammy Hajhamid</a> </h1> <nav class="svelte-bgdsr9"><a href="https://pepsi.pw" class="hover:text-black transition-colors svelte-bgdsr9">??? </a><a href="/blog" class="hover:text-black transition-colors svelte-bgdsr9">blog </a></nav> </header> <main> <section class="layout-md py-12"><hr class="mb-5"> <div class="mb-1.5"><div class="text-2xl text-black sm:mb-1"><!-- HTML_TAG_START -->web valley: prototype pollution can disable XSS filters??<!-- HTML_TAG_END --></div> <div class="text-lg leading-snug font-light text-black sm:mb-1"><!-- HTML_TAG_START -->writeup to New Year Mayhem 2024’s hard web. what happens when parseInt doesn’t work as we expect? well, XSS!<!-- HTML_TAG_END --></div> <div class="flex justify-between items-start mb-3 sm:mb-1"><div class="text-sm text-neutral-400">January 27, 2024</div> <div class="text-sm text-neutral-400">security</div></div> <hr class="mb-6 mt-5"> <div class="md-output prose svelte-19wf98v"><!-- HTML_TAG_START --><p>This weekend, the US Cyber Team played in the Global Cyber Game’s New Year
+Mayhem. With all the challenges that were outside my comfort zone (ah, crypto,
+my beloved), I thought it’d be informative to review the hardest web in the CTF!</p>
+<p>chat it is with great misfortune i cannot write up the challenges (the interpol
+and other government agencies have their guns pointed at my windows). such is
+the state of hackthebox challenge reuse :(</p>
+<!-- HTML_TAG_END --> </div></div></section></main> <footer class="layout-md mt-8 text-lg flex flex-col" data-svelte-h="svelte-migmrp"><div class="row svelte-1t3hv3r"><span class="svelte-1t3hv3r">Twitter</span> <hr class="svelte-1t3hv3r"> <a class="link svelte-1t3hv3r" href="https://twitter.com/pepsipu">@pepsipu</a></div> <div class="row svelte-1t3hv3r"><span class="svelte-1t3hv3r">GitHub</span> <hr class="svelte-1t3hv3r"> <a class="link svelte-1t3hv3r" href="https://github.com/pepsipu">@pepsipu</a></div> <div class="row svelte-1t3hv3r"><span class="svelte-1t3hv3r">Email</span> <hr class="svelte-1t3hv3r"> <a class="link svelte-1t3hv3r" href="mailto:sh@pepsi.pw">sh@pepsi.pw</a></div> </footer> 
+			
+			<script>
+				{
+					__sveltekit_10pgr4k = {
+						base: new URL("..", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					const data = [null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.a0c31b60.js"),
+						import("../_app/immutable/entry/app.5062054a.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 4],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
