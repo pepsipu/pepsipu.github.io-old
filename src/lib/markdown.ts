@@ -11,8 +11,6 @@ import markdownKatex from "@vscode/markdown-it-katex";
 import markdownAlerts from "markdown-it-github-alerts";
 import markdownFootnote from "markdown-it-footnote";
 
-import { ArrowUpRight } from "lucide-svelte";
-
 const md = markdownit({
   html: true,
   linkify: false,
